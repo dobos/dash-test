@@ -1,6 +1,6 @@
 https://www.natasshaselvaraj.com/interactive-dashboard-python
 
-
+https://dash-bootstrap-components.opensource.faculty.ai/docs/components/navbar/
 
 
 
