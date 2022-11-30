@@ -38,7 +38,5 @@ def layout(**kwargs):
                 columns=columns
             )
         ]),
-        html.Br(),
-        html.Div(id='analytics-output'),
     ])
 

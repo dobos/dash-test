@@ -1,23 +1,15 @@
 import sys
 import logging
 import dash
-from dash import html, dcc, callback, Input, Output
+from dash import html, dcc, callback, Input, Output, State
 import dash_bootstrap_components as dbc
 
 def layout():
-    # menu = html.Div([
-    #     dcc.Link("home", href=dash.page_registry['pages.home']['relative_path']),
-    #     dcc.Link("tasks", href=dash.page_registry['pages.tasks.index']['relative_path']),
-    # ])
-
-    menu = dbc.DropdownMenu(
+    menu = dbc.Nav(
         [
-            dbc.DropdownMenuItem("Home", href=dash.page_registry['pages.home']['relative_path']),
-            dbc.DropdownMenuItem("Task", href=dash.page_registry['pages.tasks.index']['relative_path']),
-        ],
-        nav=True,
-        in_navbar=True,
-        label="More",
+            dbc.NavLink("Home", href=dash.page_registry['pages.home']['relative_path']),
+            dbc.NavLink("Tasks", href=dash.page_registry['pages.tasks.index']['relative_path']),
+        ]
     )
 
     navbar = dbc.Navbar(
@@ -30,52 +22,84 @@ def layout():
                             dbc.Col(html.Img(src="", height="30px")),
                             dbc.Col(dbc.NavbarBrand("Example Dashboard", className="ms-2")),
                         ],
-                        align="center",
+                        align="left",
                         className="g-0",
                     ),
                     href="https://plotly.com",
+                    className="navbar-brand",
                     style={"textDecoration": "none"},
                 ),
-                menu,
-                dbc.NavbarToggler(id="navbar-toggler", n_clicks=0)
-            ]
+                # dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
+                dbc.Collapse(
+                    [
+                        menu
+                    ],
+                    id="navbar-collapse",
+                    is_open=False,
+                    navbar=True,
+                )
+            ],
         ),
         color="dark",
         dark=True,
     )
-    
-    # navbar = dbc.Navbar([
-    #         html.H1("Example dashboard"),
-    #         menu
-    #     ],
-    #     style={
-    #         'backgroundColor': 'yellow',
-    #         'color': 'black'
-    #     }
-    # )
 
+    footer = html.Footer(
+        [
+            html.Div(
+                [
+                    html.P([ "© 2021 Copyright: JHU P&A" ])
+                ],
+                className="text-center p-4",
+                style={ "background-color": "rgba(0, 0, 0, 0.05)" }
+            )
+        ],
+        className="mt-auto"
+    )
+    
     return html.Div(
         [
             navbar,
-            html.Br(),
-            html.Div([
-                    html.H2(["contents come here:"]),
+            dbc.Container([
                     dash.page_container
                 ]
             ),
-            html.Br(),
-            html.Div()],
-        )
+            footer
+        ],
+        className="d-flex flex-column min-vh-100"
+    )
 
 class App():
+    _default_index = """<!DOCTYPE html>
+<html>
+    <head>
+        {%metas%}
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+    </head>
+    <body class="d-flex flex-column min-vh-100">
+        <!--[if IE]><script>
+        alert("Dash v2.7+ does not support Internet Explorer. Please use a newer browser.");
+        </script><![endif]-->
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>"""
+
+
     def __init__(self):
         self.app = None
-        self.server = None
 
     def start(self, debug=False):
         self.app = dash.Dash(
             __name__,
             use_pages=True,
+            index_string=self._default_index,
             external_stylesheets=[ dbc.themes.BOOTSTRAP ])
         self.app.layout = layout()
         self.app.run_server(debug=debug)
