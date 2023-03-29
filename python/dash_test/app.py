@@ -61,9 +61,8 @@ def layout():
         [
             navbar,
             dbc.Container([
-                    dash.page_container
-                ]
-            ),
+                dash.page_container
+            ]),
             footer
         ],
         className="d-flex flex-column min-vh-100"
